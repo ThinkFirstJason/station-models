@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Station Model Management</title>
+<meta name="description" content="Station Model Management — a New York and Los Angeles model agency. Women, men, development and talent boards.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3F2EE;
+    --ink:#131313;
+    --mute:#6A6964;
+    --rule:#D5D3CC;
+    --board:#111111;
+    --signal:#F2C200;
+    --gutter:clamp(16px,3vw,40px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:"Archivo",system-ui,sans-serif;font-size:16px;line-height:1.5;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+  img{display:block;width:100%;height:100%;object-fit:cover}
+  a{color:inherit}
+  .wrap{padding:0 var(--gutter)}
+  .label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+  .confirm{color:var(--mute);font-weight:400}
+
+  /* header */
+  header{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--ink)}
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:24px;height:56px}
+  .mark{font-stretch:125%;font-weight:800;font-size:20px;letter-spacing:.02em;text-decoration:none}
+  .mark small{font-stretch:100%;font-weight:500;font-size:11px;letter-spacing:.08em;margin-left:10px;color:var(--mute);vertical-align:3px}
+  nav ul{display:flex;gap:28px;list-style:none}
+  nav a{text-decoration:none;font-size:14px;font-weight:500}
+  nav a:hover{text-decoration:underline;text-underline-offset:4px}
+  .cta-link{font-size:14px;font-weight:600;text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
+  @media (max-width:900px){nav{display:none}.mark small{display:none}}
+
+  /* hero */
+  .hero{padding-top:28px;border-bottom:1px solid var(--ink);overflow:hidden}
+  .hero-top{display:grid;grid-template-columns:repeat(12,1fr);gap:20px;align-items:end;margin-bottom:28px}
+  .hero-top h1{grid-column:1/8;font-stretch:72%;font-weight:700;font-size:clamp(40px,6.2vw,92px);line-height:.95;letter-spacing:-.01em}
+  .hero-top p{grid-column:9/13;font-size:17px;max-width:38ch}
+  .strip{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--ink)}
+  .strip figure{border-right:1px solid var(--ink)}
+  .strip figure:last-child{border-right:0}
+  .strip .ph{aspect-ratio:3/4;overflow:hidden;background:#ddd}
+  .strip figcaption{display:flex;justify-content:space-between;gap:8px;padding:10px 12px;border-top:1px solid var(--ink);font-size:13px}
+  .strip figcaption b{font-weight:600}
+  .wordmark{font-stretch:125%;font-weight:900;font-size:17.4vw;line-height:.74;letter-spacing:-.02em;margin:0 calc(var(--gutter) * -1);padding-top:.06em;white-space:nowrap;text-align:center;border-top:1px solid var(--ink)}
+  @media (max-width:900px){
+    .hero-top h1,.hero-top p{grid-column:1/-1}
+    .strip{grid-template-columns:repeat(3,1fr)}
+    .strip figure:nth-child(n+4){display:none}
+    .strip figure:nth-child(3){border-right:0}
+    .strip figcaption span{display:none}
+  }
+
+  /* section heads */
+  section{padding:72px 0}
+  .shead{display:flex;justify-content:space-between;align-items:baseline;gap:24px;flex-wrap:wrap;border-bottom:1px solid var(--ink);padding-bottom:14px;margin-bottom:28px}
+  .shead h2{font-stretch:72%;font-weight:700;font-size:clamp(32px,4vw,56px);line-height:1}
+  .shead .num{font-stretch:100%;font-weight:500;font-size:14px;color:var(--mute);margin-right:14px;vertical-align:.9em}
+
+  /* board */
+  .tabs{display:flex;gap:4px 28px;flex-wrap:wrap;list-style:none}
+  .tabs button{background:none;border:0;font:inherit;font-size:15px;font-weight:500;color:var(--mute);cursor:pointer;padding:4px 0;border-bottom:2px solid transparent}
+  .tabs button sup{font-size:10px;margin-left:3px}
+  .tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+  .tabs button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:40px 20px}
+  .card .ph{aspect-ratio:4/5;overflow:hidden;background:#ddd;margin-bottom:12px}
+  .card h3{font-size:18px;font-weight:600;line-height:1.2;display:flex;justify-content:space-between;gap:8px}
+  .card h3 span{font-weight:400;color:var(--mute);font-size:14px}
+  .card .meas{font-size:13px;color:var(--mute);margin-top:4px}
+  .card .where{font-size:13px;margin-top:8px;padding-top:8px;border-top:1px solid var(--rule)}
+  .card .where.away::before{content:"";display:inline-block;width:7px;height:7px;background:var(--ink);margin-right:7px;vertical-align:1px}
+  .board-foot{margin-top:40px;font-size:14px;color:var(--mute)}
+  @media (max-width:1000px){.grid{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:640px){.grid{grid-template-columns:repeat(2,1fr);gap:28px 14px}.card h3{flex-direction:column;gap:0;font-size:16px}}
+
+  /* transit */
+  .transit{background:var(--board);color:#EDEDED}
+  .transit .shead{border-color:#3a3a3a}
+  .transit .shead .num,.transit .shead p{color:#8d8d8d}
+  .departures{width:100%;border-collapse:collapse;font-size:15px}
+  .departures th{text-align:left;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8d8d8d;font-weight:500;padding:0 16px 10px 0;border-bottom:1px solid #3a3a3a}
+  .departures td{padding:16px 16px 16px 0;border-bottom:1px solid #2a2a2a;vertical-align:baseline}
+  .departures td.dest{font-stretch:72%;font-weight:700;font-size:28px;line-height:1;color:var(--signal);letter-spacing:.01em;text-transform:uppercase}
+  .departures td.who{font-weight:600}
+  .departures td.st{font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+  .st .on{color:var(--signal)}
+  .table-scroll{overflow-x:auto}
+  .departures{min-width:720px}
+
+  /* work index */
+  .index{list-style:none}
+  .index li{display:grid;grid-template-columns:64px 1.4fr 1fr 1fr 90px;gap:20px;align-items:center;padding:14px 0;border-bottom:1px solid var(--rule)}
+  .index .th{width:64px;height:80px;overflow:hidden;background:#ddd}
+  .index .client{font-stretch:85%;font-weight:600;font-size:22px;line-height:1.1}
+  .index .client small{display:block;font-stretch:100%;font-size:13px;font-weight:400;color:var(--mute);margin-top:2px}
+  .index .date{text-align:right;color:var(--mute);font-size:14px}
+  @media (max-width:760px){
+    .index li{grid-template-columns:56px 1fr auto;gap:14px}
+    .index .th{width:56px;height:70px}
+    .index .ph-credit{display:none}
+    .index .model{grid-column:2;font-size:14px}
+    .index .date{grid-column:3;grid-row:1}
+  }
+
+  /* scouting */
+  .scout{display:grid;grid-template-columns:5fr 7fr;gap:clamp(32px,6vw,96px)}
+  .steps{list-style:none;counter-reset:s}
+  .steps li{counter-increment:s;display:grid;grid-template-columns:44px 1fr;padding:18px 0;border-top:1px solid var(--rule)}
+  .steps li::before{content:counter(s,decimal-leading-zero);font-weight:600;font-size:14px;color:var(--mute);padding-top:2px}
+  .steps h4{font-size:17px;font-weight:600;margin-bottom:4px}
+  .steps p{font-size:15px;color:#3b3b39}
+  .warning{margin-top:28px;padding:18px 20px;border:1px solid var(--ink);font-size:15px}
+  .warning b{display:block;margin-bottom:4px}
+  form{display:grid;grid-template-columns:1fr 1fr;gap:22px 20px;align-content:start}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field.full{grid-column:1/-1}
+  .field label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+  .field input,.field select{font:inherit;font-size:16px;color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--ink);padding:8px 0;border-radius:0;outline:none}
+  .field input:focus,.field select:focus{border-bottom-width:2px;padding-bottom:7px}
+  .drop{border:1px dashed var(--ink);padding:22px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;text-align:center;font-size:12px;color:var(--mute);cursor:pointer}
+  .drop span{aspect-ratio:3/4;border:1px solid var(--rule);display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;background:var(--paper)}
+  .check{grid-column:1/-1;display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#3b3b39}
+  .check input{margin-top:4px;accent-color:var(--ink)}
+  .submit{grid-column:1/-1;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+  .submit button{font:inherit;font-weight:600;font-size:15px;background:var(--ink);color:var(--paper);border:0;padding:16px 28px;cursor:pointer}
+  .submit button:hover{background:#000}
+  .submit output{font-size:14px;color:var(--mute)}
+  @media (max-width:860px){.scout{grid-template-columns:1fr}form{grid-template-columns:1fr}.drop{grid-template-columns:repeat(2,1fr)}}
+
+  /* footer */
+  footer{border-top:1px solid var(--ink);padding-top:40px;overflow:hidden}
+  .offices{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;font-size:14px;padding-bottom:40px}
+  .offices h5{font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+  .offices p{color:#3b3b39}
+  .foot-mark{font-stretch:125%;font-weight:900;font-size:17.4vw;line-height:.74;letter-spacing:-.02em;white-space:nowrap;text-align:center;margin:0 calc(var(--gutter) * -1) -0.12em}
+  @media (max-width:760px){.offices{grid-template-columns:1fr 1fr}}
+
+  /* demo markers */
+  .demo-pill{display:inline-block;margin-right:8px;background:#FF7A00;color:#fff;font-weight:700;font-size:12px;letter-spacing:.08em;padding:3px 9px;border-radius:999px;font-size:10px}
+  .demo-tag{position:fixed;bottom:12px;left:var(--gutter);z-index:30;display:flex;align-items:center;padding-left:4px !important;background:var(--paper);border:1px solid #FF7A00;color:var(--ink);font-size:11px;padding:4px 8px}
+</style>
+</head>
+<body>
+
+
+<div class="demo-tag"><span class="demo-pill">DEMO</span>ThinkFirst Studios · [Your name here]</div>
+
+<header>
+  <div class="wrap bar">
+    <a href="#" class="mark">STATION<small>MODEL MANAGEMENT</small></a>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a href="#board">Women</a></li>
+        <li><a href="#board">Men</a></li>
+        <li><a href="#board">Development</a></li>
+        <li><a href="#board">Talent</a></li>
+        <li><a href="#transit">In transit</a></li>
+        <li><a href="#work">Work</a></li>
+      </ul>
+    </nav>
+    <a href="#scouting" class="cta-link">Become a model</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero" style="padding-bottom:0">
+    <div class="wrap">
+      <div class="hero-top">
+        <h1>New York &amp; Los Angeles. Ninety-four people on the board.</h1>
+        <p>A model agency with two offices and one booking table. We place women, men and new faces with fashion houses, magazines and brands, and we keep the board small enough to know everyone on it by name.</p>
+      </div>
+    </div>
+    <div class="strip" id="strip"></div>
+    <div class="wordmark" aria-hidden="true">STATION</div>
+  </section>
+
+  <section id="board">
+    <div class="wrap">
+      <div class="shead">
+        <h2><span class="num">01</span>The board</h2>
+        <ul class="tabs" role="tablist" id="tabs"></ul>
+      </div>
+      <div class="grid" id="grid"></div>
+      <p class="board-foot">Showing 16 of 94. A square marker means the model is working out of market. <span class="confirm">[Full roster: CONFIRM with agency]</span></p>
+    </div>
+  </section>
+
+  <section class="transit" id="transit">
+    <div class="wrap">
+      <div class="shead">
+        <h2><span class="num">02</span>In transit</h2>
+        <p style="font-size:14px">Who's where this month. Updated every Monday by the booking table.</p>
+      </div>
+      <div class="table-scroll">
+        <table class="departures">
+          <thead><tr><th>Destination</th><th>Model</th><th>Leaving</th><th>Through</th><th>For</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="dest">Paris</td><td class="who">Amara Osei</td><td>Sep 22</td><td>Oct 14</td><td>SS27 shows</td><td class="st"><span class="on">In market</span></td></tr>
+            <tr><td class="dest">Milan</td><td class="who">Hana Seo</td><td>Sep 18</td><td>Oct 02</td><td>SS27 shows, two fittings</td><td class="st">Returned</td></tr>
+            <tr><td class="dest">London</td><td class="who">Desmond Hale</td><td>Oct 06</td><td>Oct 20</td><td>Editorial, Corso Magazine</td><td class="st"><span class="on">In market</span></td></tr>
+            <tr><td class="dest">Tokyo</td><td class="who">Clara Weiss</td><td>Oct 13</td><td>Nov 09</td><td>Development stay</td><td class="st">Confirmed</td></tr>
+            <tr><td class="dest">Los Angeles</td><td class="who">Felix Arden</td><td>Oct 15</td><td>Oct 19</td><td>Campaign, Penrose Eyewear</td><td class="st">On option</td></tr>
+            <tr><td class="dest">Mexico City</td><td class="who">Jada Whitlock</td><td>Oct 27</td><td>Oct 31</td><td>Swim campaign, Low Tide</td><td class="st">On option</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="work">
+    <div class="wrap">
+      <div class="shead">
+        <h2><span class="num">03</span>Recent work</h2>
+        <p style="font-size:14px;color:var(--mute)">Clients and credits are placeholders. <span class="confirm">[CONFIRM]</span></p>
+      </div>
+      <ul class="index">
+        <li><div class="th"><img src="img/02.jpg" alt=""></div><div class="client">Maison Arlet<small>FW26 campaign</small></div><div class="model">Amara Osei</div><div class="ph-credit">ph. R. Lindqvist</div><div class="date">Sep 2026</div></li>
+        <li><div class="th"><img src="img/03.jpg" alt=""></div><div class="client">Corso Magazine<small>Cover story, issue 14</small></div><div class="model">Desmond Hale</div><div class="ph-credit">ph. T. Oyelaran</div><div class="date">Aug 2026</div></li>
+        <li><div class="th"><img src="img/08.jpg" alt=""></div><div class="client">Penrose Eyewear<small>E-commerce + social</small></div><div class="model">Hana Seo, Felix Arden</div><div class="ph-credit">ph. M. Duarte</div><div class="date">Aug 2026</div></li>
+        <li><div class="th"><img src="img/01.jpg" alt=""></div><div class="client">Low Tide Swim<small>Summer campaign</small></div><div class="model">Jada Whitlock</div><div class="ph-credit">ph. A. Brennan</div><div class="date">Jun 2026</div></li>
+        <li><div class="th"><img src="img/10.jpg" alt=""></div><div class="client">North Ridge<small>Outerwear lookbook</small></div><div class="model">Marco Vitale</div><div class="ph-credit">ph. J. Castellanos</div><div class="date">May 2026</div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="scouting" style="border-top:1px solid var(--ink)">
+    <div class="wrap">
+      <div class="shead">
+        <h2><span class="num">04</span>Become a model</h2>
+        <p style="font-size:14px;color:var(--mute)">Every submission is looked at by a person. Expect a reply within three weeks if it's a yes.</p>
+      </div>
+      <div class="scout">
+        <div>
+          <ol class="steps">
+            <li><div><h4>Four digitals</h4><p>Front, profile, full length and a smile. Daylight, no makeup, hair off the face, fitted clothes. Phone photos are fine; filters are not.</p></div></li>
+            <li><div><h4>Height and age</h4><p>Women usually 5′8″–5′11″, men 5′11″–6′2″. Talent and development boards are more flexible. <span class="confirm">[CONFIRM ranges]</span></p></div></li>
+            <li><div><h4>Under 18?</h4><p>Apply with a parent or guardian. They'll be on every call and every contract.</p></div></li>
+          </ol>
+          <div class="warning"><b>We never charge you to join.</b>No fees for test shoots, portfolios or "registration." If someone using our name asks for money, it isn't us. Email scouting@station-mgmt.example and we'll confirm.</div>
+        </div>
+
+        <form id="apply" novalidate>
+          <div class="field"><label for="f-name">Full name</label><input id="f-name" autocomplete="name"></div>
+          <div class="field"><label for="f-email">Email</label><input id="f-email" type="email" autocomplete="email"></div>
+          <div class="field"><label for="f-age">Age</label><input id="f-age" inputmode="numeric"></div>
+          <div class="field"><label for="f-height">Height</label><input id="f-height" placeholder="5′10″ or 178 cm"></div>
+          <div class="field"><label for="f-city">City</label><input id="f-city" autocomplete="address-level2"></div>
+          <div class="field"><label for="f-ig">Instagram</label><input id="f-ig" placeholder="@"></div>
+          <div class="field full"><label for="f-board">Board</label>
+            <select id="f-board"><option>Not sure, you decide</option><option>Women</option><option>Men</option><option>Development (under 18)</option><option>Talent</option></select>
+          </div>
+          <div class="field full"><label>Digitals</label>
+            <label class="drop" for="f-files"><span>Front</span><span>Profile</span><span>Full length</span><span>Smile</span></label>
+            <input id="f-files" type="file" accept="image/*" multiple hidden>
+          </div>
+          <label class="check"><input type="checkbox"> I'm under 18 and a parent or guardian is helping me apply.</label>
+          <div class="submit"><button type="submit">Send to the scouting desk</button><output id="out"></output></div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="offices">
+      <div><h5>New York</h5><p>[Street address — CONFIRM]<br>New York, NY<br>+1 (212) 000-0000</p></div>
+      <div><h5>Los Angeles</h5><p>[Street address — CONFIRM]<br>Los Angeles, CA<br>+1 (323) 000-0000</p></div>
+      <div><h5>Booking</h5><p>board@station-mgmt.example<br>scouting@station-mgmt.example<br>press@station-mgmt.example</p></div>
+      <div><h5>Elsewhere</h5><p><a href="#">Instagram</a><br><a href="#">Models.com</a><br>© 2026 Station Model Management</p></div>
+    </div>
+  </div>
+  <div class="foot-mark" aria-hidden="true">STATION</div>
+</footer>
+
+<script>
+  const models = [
+    {n:"Jada Whitlock",  d:"women", img:"01", h:"5′10″", cm:178, m:"32 · 24 · 35 · 9",  w:"New York"},
+    {n:"Amara Osei",     d:"women", img:"02", h:"5′11″", cm:180, m:"31 · 23 · 34 · 9.5", w:"Paris until Oct 14", away:1},
+    {n:"Desmond Hale",   d:"men",   img:"03", h:"6′1″",  cm:185, m:"38 · 30 · 32 · 11", w:"London until Oct 20", away:1},
+    {n:"Clara Weiss",    d:"women", img:"04", h:"5′9″",  cm:175, m:"32 · 24 · 34 · 8",  w:"New York"},
+    {n:"Ines Calder",    d:"women", img:"05", h:"5′10″", cm:178, m:"33 · 24 · 35 · 9",  w:"Los Angeles"},
+    {n:"Felix Arden",    d:"men",   img:"06", h:"6′0″",  cm:183, m:"38 · 29 · 32 · 10.5", w:"New York"},
+    {n:"Yasmin Karimi",  d:"women", img:"07", h:"5′9″",  cm:175, m:"32 · 24 · 35 · 8.5", w:"New York"},
+    {n:"Hana Seo",       d:"women", img:"08", h:"5′10″", cm:178, m:"31 · 23 · 34 · 8.5", w:"New York"},
+    {n:"Billie Ostrander",d:"women",img:"09", h:"5′8″",  cm:173, m:"33 · 25 · 35 · 8",  w:"Los Angeles"},
+    {n:"Marco Vitale",   d:"men",   img:"10", h:"6′2″",  cm:188, m:"39 · 31 · 33 · 11", w:"New York"},
+    {n:"Anjali Rao",     d:"women", img:"11", h:"5′9″",  cm:175, m:"32 · 24 · 34 · 8",  w:"Los Angeles"},
+    {n:"Kofi Mensah",    d:"talent",img:"12", h:"5′11″", cm:180, m:"Host · photographer", w:"New York"},
+    {n:"Maeve Donnelly", d:"dev",   img:"13", h:"5′9″",  cm:175, m:"Age 16 · 31 · 23 · 34", w:"Boston"},
+    {n:"Iris Tan",       d:"women", img:"14", h:"5′10″", cm:178, m:"32 · 24 · 34 · 9",  w:"Tokyo from Oct 13", away:1},
+    {n:"Jonah Pierce",   d:"dev",   img:"15", h:"6′0″",  cm:183, m:"Age 17 · 36 · 29 · 31", w:"Los Angeles"},
+    {n:"Sofia Reyes",    d:"talent",img:"16", h:"5′7″",  cm:170, m:"Creator · 410K", w:"Los Angeles"},
+  ];
+  const divisions = [["all","Everyone",94],["women","Women",38],["men","Men",29],["dev","Development",18],["talent","Talent",9]];
+
+  // Hero strip: five faces from the board
+  document.getElementById("strip").innerHTML = [1,0,2,13,7].map(i => {
+    const m = models[i];
+    return `<figure><div class="ph"><img src="img/${m.img}.jpg" alt="${m.n}"></div>
+      <figcaption><b>${m.n}</b><span>${m.h}</span></figcaption></figure>`;
+  }).join("");
+
+  const grid = document.getElementById("grid");
+  const tabs = document.getElementById("tabs");
+  tabs.innerHTML = divisions.map(([k,l,c],i) =>
+    `<li><button role="tab" aria-selected="${i===0}" data-k="${k}">${l}<sup>${c}</sup></button></li>`).join("");
+
+  function render(k){
+    grid.innerHTML = models.filter(m => k==="all" || m.d===k).map(m => `
+      <article class="card">
+        <div class="ph"><img src="img/${m.img}.jpg" alt="${m.n}"></div>
+        <h3>${m.n}<span>${m.h} / ${m.cm}</span></h3>
+        <p class="meas">${m.m}</p>
+        <p class="where${m.away?' away':''}">${m.w}</p>
+      </article>`).join("");
+  }
+  tabs.addEventListener("click", e => {
+    const b = e.target.closest("button"); if(!b) return;
+    tabs.querySelectorAll("button").forEach(x => x.setAttribute("aria-selected", x===b));
+    render(b.dataset.k);
+  });
+  render("all");
+
+  document.getElementById("apply").addEventListener("submit", e => {
+    e.preventDefault();
+    document.getElementById("out").textContent = "Demo only: nothing was sent.";
+  });
+</script>
+</body>
+</html>
